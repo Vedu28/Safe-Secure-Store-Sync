@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Safe Secure Store Sync</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div id="toastHost" class="toast-host"></div>
+
+    <main id="authView" class="auth-view">
+      <section class="auth-hero">
+        <div class="brand-lockup">
+          <span class="brand-mark">S</span>
+          <span>Safe Secure Store Sync</span>
+        </div>
+        <h1>Online File Backup System</h1>
+        <p>
+          Back up, organize, preview, restore, and securely download private files from one responsive dashboard.
+        </p>
+        <div class="hero-panel" aria-hidden="true">
+          <div class="hero-toolbar"></div>
+          <div class="hero-grid">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="auth-card" aria-label="Authentication">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-mode="login">Login</button>
+          <button class="auth-tab" data-auth-mode="signup">Signup</button>
+        </div>
+        <form id="authForm" class="stack">
+          <label>
+            Email
+            <input id="emailInput" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Password
+            <input id="passwordInput" type="password" autocomplete="current-password" required minlength="6" />
+          </label>
+          <button id="authSubmit" class="primary-btn" type="submit">Login</button>
+        </form>
+        <button id="googleBtn" class="secondary-btn" type="button">Continue with Google</button>
+        <button id="forgotBtn" class="link-btn" type="button">Forgot password?</button>
+        <p id="authHint" class="hint">Use Firebase client credentials in <code>client/js/config.js</code>.</p>
+      </section>
+    </main>
+
+    <main id="appView" class="app-view hidden">
+      <aside class="sidebar">
+        <div class="brand-lockup compact">
+          <span class="brand-mark">S</span>
+          <span>Store Sync</span>
+        </div>
+        <button id="uploadNavBtn" class="primary-btn upload-command" type="button">Upload</button>
+        <nav class="nav-list" aria-label="Main">
+          <button class="nav-item active" data-view="dashboard">Dashboard</button>
+          <button class="nav-item" data-view="files">My Files</button>
+          <button class="nav-item" data-view="favorites">Favorites</button>
+          <button class="nav-item" data-view="trash">Trash</button>
+          <button class="nav-item" data-view="analytics">Storage</button>
+          <button class="nav-item" data-view="activity">Activity</button>
+          <button class="nav-item" data-view="profile">Profile</button>
+        </nav>
+        <div class="storage-meter">
+          <div class="meter-label"><span>Storage</span><span id="storagePercent">0%</span></div>
+          <div class="meter"><span id="storageBar"></span></div>
+          <small id="storageText">0 MB used</small>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <button id="sidebarToggle" class="icon-btn" type="button" aria-label="Toggle navigation">☰</button>
+          <div class="search-wrap">
+            <input id="searchInput" type="search" placeholder="Search files" />
+          </div>
+          <select id="sortSelect" aria-label="Sort files">
+            <option value="createdAt:desc">Newest</option>
+            <option value="filename:asc">Name</option>
+            <option value="size:desc">Largest</option>
+            <option value="downloadCount:desc">Most downloaded</option>
+          </select>
+          <button id="themeBtn" class="icon-btn" type="button" aria-label="Toggle theme">◐</button>
+          <button id="logoutBtn" class="secondary-btn slim" type="button">Logout</button>
+        </header>
+
+        <section class="content">
+          <div id="dashboardPanel" class="view-panel active">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Dashboard</p>
+                <h2 id="welcomeTitle">Welcome back</h2>
+              </div>
+            </div>
+            <div class="stat-grid">
+              <article class="stat-card"><span>Total Files</span><strong id="totalFiles">0</strong></article>
+              <article class="stat-card"><span>Storage Used</span><strong id="storageUsed">0 MB</strong></article>
+              <article class="stat-card"><span>Remaining</span><strong id="storageRemaining">0 GB</strong></article>
+              <article class="stat-card"><span>Trash</span><strong id="deletedFiles">0</strong></article>
+            </div>
+            <div class="two-column">
+              <section class="panel">
+                <h3>Recent Uploads</h3>
+                <div id="recentUploads" class="file-mini-list skeleton"></div>
+              </section>
+              <section class="panel">
+                <h3>Recent Activity</h3>
+                <div id="recentActivity" class="activity-list skeleton"></div>
+              </section>
+            </div>
+          </div>
+
+          <div id="filesPanel" class="view-panel">
+            <div class="section-heading">
+              <div><p class="eyebrow">Library</p><h2 id="filePanelTitle">My Files</h2></div>
+              <div class="filters">
+                <select id="typeFilter" aria-label="Filter by type">
+                  <option value="">All types</option>
+                  <option value="image">Images</option>
+                  <option value="video">Videos</option>
+                  <option value="pdf">PDFs</option>
+                  <option value="word">Word</option>
+                  <option value="excel">Excel</option>
+                  <option value="archive">Archives</option>
+                  <option value="text">Text</option>
+                </select>
+              </div>
+            </div>
+            <section id="dropzone" class="dropzone">
+              <input id="fileInput" type="file" multiple />
+              <strong>Drop files here</strong>
+              <span>Images, videos, PDFs, docs, ZIPs, spreadsheets, and more</span>
+            </section>
+            <div id="uploadQueue" class="upload-queue"></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th><th>Type</th><th>Size</th><th>Modified</th><th>Downloads</th><th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="filesTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="analyticsPanel" class="view-panel">
+            <div class="section-heading"><div><p class="eyebrow">Analytics</p><h2>Storage Analytics</h2></div></div>
+            <div class="two-column">
+              <section class="panel"><h3>File Types</h3><div id="typeChart" class="bar-chart"></div></section>
+              <section class="panel"><h3>Upload Trend</h3><div id="monthChart" class="bar-chart"></div></section>
+            </div>
+          </div>
+
+          <div id="activityPanel" class="view-panel">
+            <div class="section-heading"><div><p class="eyebrow">Audit</p><h2>Activity Logs</h2></div></div>
+            <div id="activityLogList" class="activity-list"></div>
+          </div>
+
+          <div id="profilePanel" class="view-panel">
+            <div class="section-heading"><div><p class="eyebrow">Account</p><h2>Profile & Settings</h2></div></div>
+            <section class="panel profile-panel">
+              <img id="profilePhoto" alt="" />
+              <div>
+                <h3 id="profileName">User</h3>
+                <p id="profileEmail"></p>
+                <p id="profileVerified" class="hint"></p>
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="detailsModal">
+      <form method="dialog" class="modal">
+        <button class="icon-btn close-btn" value="cancel" aria-label="Close">×</button>
+        <h3 id="modalTitle">File details</h3>
+        <div id="modalBody"></div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>
